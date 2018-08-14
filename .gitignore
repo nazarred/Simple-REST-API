@@ -1,0 +1,4 @@
+*.pyc
+.idea/
+db.sqlite3
+src/simple_api/local_settings.py
