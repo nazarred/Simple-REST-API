@@ -20,5 +20,6 @@ from accounts.views import ActivationView
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/accounts/', include('accounts.urls', namespace='api_accounts')),
+    url(r'^api/posts/', include('posts.urls', namespace='api_posts')),
     url(r'^activate/(?P<token>[\w-]+)/(?P<pk>\d+)/$', ActivationView.as_view(), name='activation_link')
 ]
