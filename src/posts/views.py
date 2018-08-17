@@ -1,10 +1,22 @@
-from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
-from rest_framework import status
-from rest_framework.generics import CreateAPIView
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
 
+from rest_framework.decorators import api_view
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    UpdateAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateAPIView
+    )
+from rest_framework.response import Response
+
+from .serializers import (
+    PostDetailSerializer,
+    PostCreateUpdateSerializer,
+    PostListSerializer
+)
 from .models import Post, Like
 
 User = get_user_model()
@@ -23,3 +35,37 @@ def like_or_unlike_view(request):
     if not created:
         like.delete()
     return Response({'liked': created})
+
+
+class PostDetailAPIView(RetrieveAPIView):
+    serializer_class = PostDetailSerializer
+    queryset = Post.objects.all()
+
+
+class PostCreateAPIView(CreateAPIView):
+    serializer_class = PostCreateUpdateSerializer
+    queryset = Post.objects.all()
+
+
+class PostUpdateAPIView(RetrieveUpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostCreateUpdateSerializer
+    lookup_field = 'slug'
+    # permission_classes = [IsOwnerOrReadOnly]
+
+    # lookup_url_kwarg = "abc"
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class PostDeleteAPIView(DestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostDetailSerializer
+    lookup_field = 'slug'
+    # permission_classes = [IsOwnerOrReadOnly]
+
+
+class PostListAPIView(ListAPIView):
+    serializer_class = PostListSerializer
+    queryset = Post.objects.all()
+

@@ -42,3 +42,15 @@ class UserCreateSerializer(serializers.ModelSerializer):
         data.pop('password1')
         user_inst = User.objects.create_inactive_user(**data)
         return user_inst
+
+
+class UserListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'email',
+            'last_name',
+            'first_name',
+        ]

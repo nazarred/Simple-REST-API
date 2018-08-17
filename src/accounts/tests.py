@@ -160,6 +160,3 @@ class ViewTests(TestCase):
             else:
                 self.assertEqual(response.data.get(key), self.user_data.get(key))
                 self.assertEqual(response.data.get(key), self.user_data.get(key))
-
-
-
