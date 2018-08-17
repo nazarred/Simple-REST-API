@@ -19,6 +19,11 @@ from .serializers import UserCreateSerializer, UserDetailSerializer
 User = get_user_model()
 
 
+class UserDetailAPIView(RetrieveAPIView):
+    serializer_class = UserDetailSerializer
+    queryset = User.objects.all()
+
+
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
     queryset = User.objects.all()
