@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth import  get_user_model
 from django.db.models.signals import post_save, post_delete
 
+from .managers import PostManager
 from .signals_handlers import post_likes_decrement, post_likes_increment
 
 User = get_user_model()
@@ -16,6 +17,7 @@ class Post(models.Model):
     is_published = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+    objects = PostManager()
 
     def increment_likes(self):
         self.number_of_likes += 1

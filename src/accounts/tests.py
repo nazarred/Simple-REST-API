@@ -3,8 +3,16 @@ from django.core import mail
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.conf import settings
+import clearbit
+
+from accounts.utils import GetAuthTokenMixin
 
 User = get_user_model()
+
+UNDELIVERABLE_EMAIL = 'sdstsseli@close.io'
+EMAIL_FOR_CLEARBIT = 'steli@close.io'
+
 
 
 class UserModelTests(TestCase):
@@ -49,7 +57,7 @@ class UserModelTests(TestCase):
         self.assertIn(activation_key, email_inst.body)
 
 
-class ViewTests(TestCase):
+class ViewTests(GetAuthTokenMixin, TestCase):
 
     def setUp(self):
         self.user_data = {'email': 'test@mail.com',
@@ -73,6 +81,36 @@ class ViewTests(TestCase):
         new_user = User.objects.get(email=self.user_data['email'])
         self.assertFalse(new_user.is_active)
         self.assertFalse(new_user.is_superuser)
+
+    def test_getting_additional_data(self):
+        self.user_data['password1'] = self.user_data['password']
+        self.user_data['email'] = EMAIL_FOR_CLEARBIT
+        response = self.client.post(reverse('api_accounts:register'),
+                                    data=self.user_data)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(User.objects.count(), 1)
+        clearbit.key = settings.CLEARBIT_KEY
+        lookup = clearbit.Enrichment.find(email=EMAIL_FOR_CLEARBIT, stream=True)
+        user = User.objects.get(email=EMAIL_FOR_CLEARBIT)
+        data = lookup['person']
+        self.assertTrue(data)
+        self.assertEqual(data.get('location'), user.location)
+        self.assertEqual(data.get('bio'), user.bio)
+        self.assertEqual(data.get('site'), user.site)
+
+    def test_undeliverable_email(self):
+        """
+        Test creation user with undeliverable email.
+        Email checks with hunter.io API
+        """
+        self.user_data['password1'] = self.user_data['password']
+        self.user_data['email'] = UNDELIVERABLE_EMAIL
+        response = self.client.post(reverse('api_accounts:register'),
+                                    data=self.user_data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(User.objects.count(), 0)
+        error_msg = "This email is undeliverable"
+        self.assertIn(error_msg, response.data.get('email')[0])
 
     def test_email_exist(self):
         """
@@ -150,9 +188,13 @@ class ViewTests(TestCase):
         self.assertContains(response, "Can't verified your email. Account not activated")
 
     def test_user_detail_view(self):
-
         new_user = User.objects.create_user(**self.user_data)
+        # Unauthorized user
         response = self.client.get(reverse('api_accounts:detail', kwargs={'pk': new_user.pk}))
+        self.assertEqual(response.status_code, 401)
+        # Authorized user
+        client = self.get_authorized_client(self.user_data['email'], self.user_data['password'])
+        response = client.get(reverse('api_accounts:detail', kwargs={'pk': new_user.pk}))
         self.assertEqual(response.status_code, 200)
         for key in self.user_data:
             if key in ['password']:

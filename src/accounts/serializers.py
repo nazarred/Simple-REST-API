@@ -1,11 +1,17 @@
+from django.conf import settings
+
 from rest_framework import serializers
 from .models import User
+from .utils import HunterAPIClient
+
+hunter = HunterAPIClient(settings.HUNTER_API_KEY)
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            'id',
             'email',
             'last_name',
             'first_name',
@@ -27,6 +33,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
             'last_name',
             'first_name',
             'phone',
+            'location',
+            'bio',
+            'site'
         ]
 
     def validate_password1(self, value):
@@ -35,6 +44,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
         password1 = value
         if password != password1:
             raise serializers.ValidationError("Passwords must match")
+        return value
+
+    def validate_email(self, value):
+        status = hunter.email_verifier(value)
+        if status == 'undeliverable':
+            raise serializers.ValidationError("This email is undeliverable")
         return value
 
     def create(self, validated_data):

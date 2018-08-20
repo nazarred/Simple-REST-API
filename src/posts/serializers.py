@@ -3,8 +3,19 @@ from rest_framework.serializers import (
     SerializerMethodField
 )
 
-from accounts.serializers import UserDetailSerializer, UserListSerializer
+from accounts.serializers import UserDetailSerializer
 from posts.models import Post
+
+
+class LikeListSerializer(ModelSerializer):
+    user = UserDetailSerializer()
+
+    class Meta:
+        model = Post
+        fields = [
+            'id',
+            'user',
+        ]
 
 
 class PostCreateUpdateSerializer(ModelSerializer):
@@ -19,7 +30,7 @@ class PostCreateUpdateSerializer(ModelSerializer):
 
 class PostDetailSerializer(ModelSerializer):
     user = UserDetailSerializer(read_only=True)
-    who_liked = SerializerMethodField()
+    likes = LikeListSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
@@ -29,23 +40,18 @@ class PostDetailSerializer(ModelSerializer):
             'title',
             'content',
             'number_of_likes',
-            'who_liked',
+            'likes',
             'is_published',
             'updated',
-            'timestamp',
+            'timestamp'
         ]
-
-    def get_who_liked(self, obj):
-        qs = obj.get_users_who_liked()
-        who_liked = UserListSerializer(qs, many=True).data
-        return who_liked
 
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop('fields', None)
         super(PostDetailSerializer, self).__init__(*args, **kwargs)
-        show_who_liked = self.context['request'].GET.get('who_liked')
+        show_who_liked = self.context['request'].GET.get('likes')
         if not show_who_liked == '1':
-            self.fields.pop('who_liked')
+            self.fields.pop('likes')
 
 
 class PostListSerializer(ModelSerializer):

@@ -5,12 +5,13 @@ from .views import (
     PostCreateAPIView,
     PostDeleteAPIView,
     PostDetailAPIView,
-    PostListAPIView
+    PostListAPIView,
+    LikeListAPIView
 )
 
 urlpatterns = [
     url(r'^likes/$', like_or_unlike_view, name='likes'),
-    url(r'^likes-list/(?P<pk>\d+)/', like_or_unlike_view, name='likes_list'),
+    url(r'^likes-list/(?P<pk>\d+)/', LikeListAPIView.as_view(), name='likes_list'),
     url(r'^list/', PostListAPIView.as_view(), name='post_list'),
     url(r'^create/', PostCreateAPIView.as_view(), name='post_create'),
     url(r'^detail/(?P<pk>\d+)/', PostDetailAPIView.as_view(), name='post_detail'),
