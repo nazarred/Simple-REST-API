@@ -18,6 +18,7 @@ from .serializers import (
     PostListSerializer,
     LikeListSerializer
 )
+from .pagination import CustomLimitOffsetPagination
 from .permissions import IsOwnerOrReadOnly
 from .models import Post, Like
 
@@ -42,6 +43,7 @@ def like_or_unlike_view(request):
 
 class LikeListAPIView(ListAPIView):
     serializer_class = LikeListSerializer
+    pagination_class = CustomLimitOffsetPagination
 
     def get_queryset(self):
         post_id = self.kwargs.get('pk')
@@ -77,3 +79,4 @@ class PostDeleteAPIView(DestroyAPIView):
 class PostListAPIView(ListAPIView):
     serializer_class = PostListSerializer
     queryset = Post.objects.get_active_posts()
+    pagination_class = CustomLimitOffsetPagination

@@ -83,7 +83,6 @@ class ViewsTests(GetAuthTokenMixin, TestCase):
         # client with JWT in headers
         self.auth_client = self.get_authorized_client(self.user_data['email'], self.user_data['password'])
 
-
     def test_like_or_unlike_view(self):
         # Unauthorized user
         response = self.client.post(reverse('api_posts:likes'),
@@ -139,13 +138,13 @@ class ViewsTests(GetAuthTokenMixin, TestCase):
         another_likes = mixer.cycle(10).blend(Like)
         response = self.client.get(reverse('api_posts:likes_list', kwargs={'pk': self.post.id}))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 4)
 
     def test_post_list_view(self):
         posts = mixer.cycle(4).blend(Post)
         response = self.client.get(reverse('api_posts:post_list'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 5)
+        self.assertEqual(len(response.data['results']), 5)
 
     def test_post_detail_view(self):
         response = self.client.get(reverse('api_posts:post_detail', kwargs={'pk': self.post.id}))
