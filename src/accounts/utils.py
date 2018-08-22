@@ -65,7 +65,7 @@ class HunterAPIClient(object):
         response = self.get_response(url)
         if response:
             data = response.json().get('data')
-            return data.get('result')
+            return data.get('result') if data else None
 
     def get_response(self, url):
         try:

@@ -4,10 +4,9 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.conf import settings
-import clearbit
-from mock import patch
+from mock import Mock, patch
 
-from accounts.utils import GetAuthTokenMixin
+from accounts.utils import GetAuthTokenMixin, HunterAPIClient
 
 User = get_user_model()
 
@@ -17,7 +16,6 @@ CLEARBIT_MOCK_DATA = {'person': {
     'location': 'some location',
     'site': 'https://google.com'
 }}
-
 
 
 class UserModelTests(TestCase):
@@ -219,3 +217,31 @@ class ViewTests(GetAuthTokenMixin, TestCase):
             else:
                 self.assertEqual(response.data.get(key), self.user_data.get(key))
                 self.assertEqual(response.data.get(key), self.user_data.get(key))
+
+
+class HunterAPIClientTests(TestCase):
+    api_key = settings.HUNTER_API_KEY
+    email = 'email@com.ua'
+    resp_data = {'data': {'result': 'ok'}}
+
+    def setUp(self):
+        self.hunter_client = HunterAPIClient(self.api_key)
+        self.url = HunterAPIClient.email_verif_url.format(email=self.email, key=self.api_key)
+        mock_resp = Mock()
+        mock_resp.json = Mock(return_value=self.resp_data)
+        mock_resp.status_code = 200
+        self.mock_resp = mock_resp
+
+    def test_get_url(self):
+        self.assertEqual(self.url, self.hunter_client.get_url(self.email))
+
+    @patch('requests.get')
+    def test_get_response_200(self, mock_get):
+        mock_get.return_value = self.mock_resp
+        response = self.hunter_client.get_response(self.url)
+        self.assertEqual(response.json(), self.resp_data)
+
+    @patch('requests.get')
+    def test_email_verifier(self, mock_get):
+        mock_get.return_value = self.mock_resp
+        self.assertEqual(self.hunter_client.email_verifier(self.url), self.resp_data['data']['result'])
