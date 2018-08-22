@@ -78,8 +78,3 @@ class HunterAPIClient(object):
 
 def get_hunter_client():
     return HunterAPIClient(settings.HUNTER_API_KEY)
-
-
-
-
-

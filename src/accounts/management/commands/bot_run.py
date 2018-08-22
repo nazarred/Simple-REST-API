@@ -1,7 +1,6 @@
 import random
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError
 from mixer.backend.django import mixer
 from posts.models import Post, Like
 from simple_api.bot_settings import (
@@ -29,5 +28,5 @@ class Command(BaseCommand):
         for user in users:
             number_of_likes = random.randint(1, max_likes_per_user)
             random.shuffle(all_posts)
-            likes = mixer.cycle(number_of_likes).blend(Like, user=user, post=(post for post in all_posts[:number_of_likes]))
-
+            likes = mixer.cycle(number_of_likes).blend(Like, user=user,
+                                                       post=(post for post in all_posts[:number_of_likes]))

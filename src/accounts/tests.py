@@ -70,7 +70,7 @@ class ViewTests(GetAuthTokenMixin, TestCase):
 
     @patch('clearbit.Enrichment')
     @patch('accounts.utils.HunterAPIClient.email_verifier')
-    def test_success_user_creation(self,mock_email_verifier, clearbit_mock):
+    def test_success_user_creation(self, mock_email_verifier, clearbit_mock):
         clearbit_mock.find.return_value = None
         mock_email_verifier.return_value = 'deliverable'
         self.user_data['password1'] = self.user_data['password']

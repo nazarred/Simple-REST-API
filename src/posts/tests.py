@@ -93,10 +93,10 @@ class ViewsTests(GetAuthTokenMixin, TestCase):
         self.assertEqual(response.status_code, 401)
         # Authorized user
         response = self.auth_client.post(reverse('api_posts:likes'),
-                                        data={
-                                            'user_id': self.post.user_id,
-                                            'post_id': self.post.id
-                                        })
+                                         data={
+                                             'user_id': self.post.user_id,
+                                             'post_id': self.post.id
+                                         })
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.data.get('liked'))
         response = self.auth_client.post(reverse('api_posts:likes'),
@@ -212,9 +212,3 @@ class ViewsTests(GetAuthTokenMixin, TestCase):
         response = self.auth_client.delete(reverse('api_posts:post_delete', kwargs={'pk': self.post.id}))
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Post.objects.count(), 1)
-
-
-
-
-
-
