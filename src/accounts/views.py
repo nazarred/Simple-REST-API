@@ -73,5 +73,4 @@ class ActivationView(TemplateView):
         token_generator = PasswordResetTokenGenerator()
         verified = token_generator.check_token(user, token)
         if verified:
-            user.activate()
-        return user.is_active
+            return user.activate()

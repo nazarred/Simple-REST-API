@@ -1,7 +1,7 @@
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = '587'
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = 'SG.oYsYIsdfdffOeS5CaFsdfS4gZTXCOg.9ztpXfm3Z-vm_CdDcg2oXwxsdfGCrPcBwUjhzANthE6e5w'
+EMAIL_HOST_PASSWORD = 'xxxx'
 
-CLEARBIT_KEY = 'sk_7a181912c4ffsdffceab952f36362sdf98907d55c'
-HUNTER_API_KEY = 'c3552130d33sdds42e4d856b5a64031bsd365f347cbc97'
+CLEARBIT_KEY = 'xxxxx'
+HUNTER_API_KEY = 'xxxx'

@@ -133,6 +133,10 @@ REST_FRAMEWORK = {
     ),
 }
 
+ADMIN_EMAIL = 'admin-api@co.com'
+HOSTNAME = 'localhost'
+PROTOCOL = 'http'
+
 try:
     from .local_settings import *
 except ImportError:

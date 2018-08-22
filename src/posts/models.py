@@ -11,7 +11,7 @@ User = get_user_model()
 class Post(models.Model):
     user = models.ForeignKey(User)
     title = models.CharField(max_length=120)
-    content = models.TextField(blank=True, null=True)
+    content = models.TextField(blank=True)
     number_of_likes = models.IntegerField(default=0)
     is_published = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
@@ -27,7 +27,7 @@ class Post(models.Model):
         self.save()
 
     def get_users_who_liked(self):
-        return User.objects.filter(likes__in=self.likes.all())
+        return User.objects.filter(likes__in=self.likes.values_list('id', flat=True))
 
     def __str__(self):
         return self.title
