@@ -47,7 +47,6 @@ def get_additional_info(email):
             return data
 
 
-# steli@close.io
 class HunterAPIClient(object):
     """
     Client for working with hunter.io API
@@ -75,6 +74,11 @@ class HunterAPIClient(object):
             return None
         if response.status_code == 200:
             return response
+
+
+def get_hunter_client():
+    return HunterAPIClient(settings.HUNTER_API_KEY)
+
 
 
 

@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 from django.contrib.auth import  get_user_model
 from django.db.models.signals import post_save, post_delete
 
@@ -10,7 +9,7 @@ User = get_user_model()
 
 
 class Post(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(User)
     title = models.CharField(max_length=120)
     content = models.TextField(blank=True, null=True)
     number_of_likes = models.IntegerField(default=0)
@@ -35,7 +34,7 @@ class Post(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='likes')
+    user = models.ForeignKey(User, related_name='likes')
     post = models.ForeignKey(Post, related_name='likes')
     timestamp = models.DateTimeField(auto_now_add=True)
 

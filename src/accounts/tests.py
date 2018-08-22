@@ -5,13 +5,18 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.conf import settings
 import clearbit
+from mock import patch
 
 from accounts.utils import GetAuthTokenMixin
 
 User = get_user_model()
 
 UNDELIVERABLE_EMAIL = 'sdstsseli@close.io'
-EMAIL_FOR_CLEARBIT = 'steli@close.io'
+CLEARBIT_MOCK_DATA = {'person': {
+    'bio': 'some bio',
+    'location': 'some location',
+    'site': 'https://google.com'
+}}
 
 
 
@@ -65,11 +70,17 @@ class ViewTests(GetAuthTokenMixin, TestCase):
                           'first_name': 'John',
                           'last_name': 'Dou'}
 
-    def test_success_user_creation(self):
+    @patch('clearbit.Enrichment')
+    @patch('accounts.utils.HunterAPIClient.email_verifier')
+    def test_success_user_creation(self,mock_email_verifier, clearbit_mock):
+        clearbit_mock.find.return_value = None
+        mock_email_verifier.return_value = 'deliverable'
         self.user_data['password1'] = self.user_data['password']
         response = self.client.post(reverse('api_accounts:register'),
                                     data=self.user_data)
         self.assertEqual(response.status_code, 201)
+        mock_email_verifier.assert_called_with(self.user_data['email'])
+        clearbit_mock.find.assert_called_with(email=self.user_data['email'], stream=True)
         self.assertEqual(User.objects.count(), 1)
         for key in self.user_data:
             if key in ['password', 'password1']:
@@ -82,31 +93,37 @@ class ViewTests(GetAuthTokenMixin, TestCase):
         self.assertFalse(new_user.is_active)
         self.assertFalse(new_user.is_superuser)
 
-    def test_getting_additional_data(self):
+    @patch('clearbit.Enrichment')
+    @patch('accounts.utils.HunterAPIClient.email_verifier')
+    def test_getting_additional_data(self, mock_email_verifier, clearbit_mock):
+        clearbit_mock.find.return_value = CLEARBIT_MOCK_DATA
+        mock_email_verifier.return_value = 'deliverable'
         self.user_data['password1'] = self.user_data['password']
-        self.user_data['email'] = EMAIL_FOR_CLEARBIT
         response = self.client.post(reverse('api_accounts:register'),
                                     data=self.user_data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(User.objects.count(), 1)
-        clearbit.key = settings.CLEARBIT_KEY
-        lookup = clearbit.Enrichment.find(email=EMAIL_FOR_CLEARBIT, stream=True)
-        user = User.objects.get(email=EMAIL_FOR_CLEARBIT)
-        data = lookup['person']
+        mock_email_verifier.assert_called_with(self.user_data['email'])
+        clearbit_mock.find.assert_called_with(email=self.user_data['email'], stream=True)
+
+        user = User.objects.get(email=self.user_data['email'])
+        data = CLEARBIT_MOCK_DATA['person']
         self.assertTrue(data)
         self.assertEqual(data.get('location'), user.location)
         self.assertEqual(data.get('bio'), user.bio)
         self.assertEqual(data.get('site'), user.site)
 
-    def test_undeliverable_email(self):
+    @patch('accounts.utils.HunterAPIClient.email_verifier')
+    def test_undeliverable_email(self, mock_email_verifier):
         """
         Test creation user with undeliverable email.
         Email checks with hunter.io API
         """
+        mock_email_verifier.return_value = 'undeliverable'
         self.user_data['password1'] = self.user_data['password']
-        self.user_data['email'] = UNDELIVERABLE_EMAIL
         response = self.client.post(reverse('api_accounts:register'),
                                     data=self.user_data)
+        mock_email_verifier.assert_called_with(self.user_data['email'])
         self.assertEqual(response.status_code, 400)
         self.assertEqual(User.objects.count(), 0)
         error_msg = "This email is undeliverable"

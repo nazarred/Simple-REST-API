@@ -2,9 +2,7 @@ from django.conf import settings
 
 from rest_framework import serializers
 from .models import User
-from .utils import HunterAPIClient
-
-hunter = HunterAPIClient(settings.HUNTER_API_KEY)
+from .utils import get_hunter_client
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -47,6 +45,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_email(self, value):
+        hunter = get_hunter_client()
         status = hunter.email_verifier(value)
         if status == 'undeliverable':
             raise serializers.ValidationError("This email is undeliverable")
