@@ -95,7 +95,6 @@ def run(number_of_users, max_posts_per_user, max_likes_per_user, max_try, hostna
             'first_name': faker.first_name(),
             'last_name': faker.last_name(),
         })
-        print(email)
         if not email and count < max_try:
             count += 1
             continue
