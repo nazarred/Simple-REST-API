@@ -22,10 +22,14 @@ class PostCreateUpdateSerializer(ModelSerializer):
     class Meta:
         model = Post
         fields = [
+            'id',
             'title',
             'content',
             'is_published'
         ]
+        extra_kwargs = {"id":
+                            {"read_only": True}
+                        }
 
 
 class PostDetailSerializer(ModelSerializer):

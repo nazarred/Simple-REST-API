@@ -50,9 +50,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
         return self.is_active
 
-    def send_activation_email(self):
+    def generate_activation_key(self):
         token_generator = PasswordResetTokenGenerator()
-        activation_key = token_generator.make_token(self)
+        return token_generator.make_token(self)
+
+    def send_activation_email(self):
+        activation_key = self.generate_activation_key()
         url = reverse('activation_link', kwargs={
             'token': activation_key,
             'pk': self.id

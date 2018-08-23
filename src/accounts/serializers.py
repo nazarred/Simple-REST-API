@@ -12,6 +12,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
             'last_name',
             'first_name',
             'phone',
+            'is_active',
             'date_joined'
         ]
 
@@ -19,10 +20,12 @@ class UserDetailSerializer(serializers.ModelSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password1 = serializers.CharField(write_only=True)
+    activation_key = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = [
+            'id',
             'email',
             'password',
             'password1',
@@ -31,8 +34,16 @@ class UserCreateSerializer(serializers.ModelSerializer):
             'phone',
             'location',
             'bio',
-            'site'
+            'site',
+            'activation_key'
         ]
+        extra_kwargs = {"id":
+                            {"read_only": True}
+                        }
+
+    def get_activation_key(self, obj):
+        if obj.id:
+            return obj.generate_activation_key()
 
     def validate_password1(self, value):
         data = self.get_initial()
