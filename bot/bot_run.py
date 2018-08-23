@@ -109,8 +109,6 @@ def run(number_of_users, max_posts_per_user, max_likes_per_user, max_try, hostna
                                                                        'is_published': True})
                 post_ids.append(post_id)
             users.append((email, user_id))
-    print(len(users))
-    print(len(post_ids))
     for email, user_id in users:
         number_of_likes = random.randint(1, max_likes_per_user)
         random.shuffle(post_ids)
