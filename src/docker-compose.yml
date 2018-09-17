@@ -1,0 +1,47 @@
+version: '3.5'
+
+services:
+  redis:
+    image: "redis:alpine"
+  simple_api:
+    build: .
+    command: bash -c 'python manage.py collectstatic --noinput && python manage.py makemigrations && python manage.py migrate && gunicorn --chdir simple_api --bind :8000 simple_api.wsgi:application'
+    volumes:
+      - .:/opt/services/api/src
+      - ./static:/opt/services/api/static
+      - ./media:/opt/services/api/media
+    networks:
+      - nginx_network
+    depends_on:
+      - redis
+  celery:
+    build: .
+    command: celery -A simple_api worker -l info
+    volumes:
+      - .:/opt/services/api/src
+    depends_on:
+      - redis
+  celery-beat:
+    build: .
+    command: celery -A simple_api beat -l info
+    volumes:
+      - .:/opt/services/api/src
+    depends_on:
+      - redis
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 8000:80
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - ./static:/opt/services/api/static
+      - ./media:/opt/services/api/media
+    depends_on:
+      - simple_api
+    networks:
+      - nginx_network
+
+networks:
+  nginx_network:
+    driver: bridge
