@@ -137,6 +137,12 @@ ADMIN_EMAIL = 'admin-api@co.com'
 HOSTNAME = 'localhost'
 PROTOCOL = 'http'
 
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
 try:
     from .local_settings import *
 except ImportError:
