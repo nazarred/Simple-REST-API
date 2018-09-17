@@ -3,5 +3,6 @@
 db.sqlite3
 src/simple_api/local_settings.py
 celerybeat-schedule
-src/media/
-src/static/
+media/
+static/
+celerybeat.pid
