@@ -6,8 +6,8 @@ services:
   simple_api:
     build: .
     image: simple_api:main
-    working_dir: /app/src
-    command: /bin/bash start_api.sh
+    working_dir: /app
+    command: /bin/bash scripts/start_api.sh
     volumes:
       - .:/app
       - ./static:/app/static
@@ -19,8 +19,8 @@ services:
       - database
   celery:
     image: simple_api:main
-    working_dir: /app/src
-    command: celery -A simple_api worker -l info
+    working_dir: /app
+    command: /bin/bash scripts/celery.sh
     volumes:
       - .:/app
     depends_on:
@@ -28,8 +28,8 @@ services:
       - database
   celery-beat:
     image: simple_api:main
-    working_dir: /app/src
-    command: celery -A simple_api beat -l info
+    working_dir: /app
+    command: /bin/bash scripts/celery_beat.sh
     volumes:
       - .:/app
     depends_on:
