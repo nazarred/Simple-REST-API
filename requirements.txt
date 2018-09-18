@@ -1,6 +1,7 @@
 clearbit==0.1.7
 celery==4.2
 django==1.11
+django-configurations==2.1
 djangorestframework==3.6.0
 djangorestframework-jwt==1.11.0
 django-filter==2.0.0
