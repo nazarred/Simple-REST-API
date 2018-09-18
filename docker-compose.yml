@@ -5,49 +5,53 @@ services:
     image: "redis:alpine"
   simple_api:
     build: .
-    working_dir: /opt/services/api/src
-    command: bash -c 'python manage.py collectstatic --noinput &&
-     python manage.py makemigrations &&
-     python manage.py migrate &&
-     gunicorn --chdir simple_api --bind :8000 simple_api.wsgi:application'
+    image: simple_api:main
+    working_dir: /app/src
+    command: /bin/bash start_api.sh
     volumes:
-      - .:/opt/services/api
-      - ./static:/opt/services/api/static
-      - ./media:/opt/services/api/media
-    networks:
-      - nginx_network
+      - .:/app
+      - ./static:/app/static
+      - ./media:/app/media
+    expose:
+      - 8000
     depends_on:
       - redis
+      - database
   celery:
-    build: .
-    working_dir: /opt/services/api/src
+    image: simple_api:main
+    working_dir: /app/src
     command: celery -A simple_api worker -l info
     volumes:
-      - .:/opt/services/api
+      - .:/app
     depends_on:
       - redis
+      - database
   celery-beat:
-    build: .
-    working_dir: /opt/services/api/src
+    image: simple_api:main
+    working_dir: /app/src
     command: celery -A simple_api beat -l info
     volumes:
-      - .:/opt/services/api
+      - .:/app
     depends_on:
       - redis
+      - database
 
   nginx:
-    image: nginx:latest
+    build: ./config/nginx/
     ports:
       - 8000:80
     volumes:
-      - ./config/nginx/conf.d:/etc/nginx/conf.d
-      - ./static:/opt/services/api/static
-      - ./media:/opt/services/api/media
+      - ./static:/app/static
+      - ./media:/app/media
     depends_on:
       - simple_api
-    networks:
-      - nginx_network
 
-networks:
-  nginx_network:
-    driver: bridge
+  database:
+    image: postgres:10
+    env_file:
+      - config/db/database_env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+ pg_data:
