@@ -86,12 +86,12 @@ class Base(Configuration):
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'database',
-            'USER': 'db_user',
-            'PASSWORD': 'db_password',
-            'HOST': 'database',
-            'PORT': '5432',
+            'ENGINE': values.Value('django.db.backends.postgresql_psycopg2', environ_name='DJANGO_DATABASE_ENGINE'),
+            'NAME': values.Value('db', environ_name='DB', environ_prefix='POSTGRES'),
+            'USER': values.Value('db_user', environ_name='USER', environ_prefix='POSTGRES'),
+            'PASSWORD': values.Value('db_password', environ_name='PASSWORD', environ_prefix='POSTGRES'),
+            'HOST': values.Value('database', environ_name='DJANGO_DATABASE_HOST'),
+            'PORT': values.Value('5432', environ_name='DJANGO_DATABASE_PORT'),
         }
     }
 
@@ -150,8 +150,8 @@ class Base(Configuration):
     HOSTNAME = 'localhost'
     PROTOCOL = 'http'
 
-    CELERY_BROKER_URL = 'redis://redis:6379'
-    CELERY_RESULT_BACKEND = 'redis://redis:6379'
+    CELERY_BROKER_URL = values.Value('redis://localhost:6379')
+    CELERY_RESULT_BACKEND = values.Value('redis://localhost:6379')
     CELERY_ACCEPT_CONTENT = ['application/json']
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_RESULT_SERIALIZER = 'json'

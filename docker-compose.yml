@@ -7,6 +7,9 @@ services:
     build: .
     image: simple_api:main
     working_dir: /app
+    env_file:
+      - ./src/env/dev_env
+      - config/db/database_env
     command: /bin/bash scripts/start_api.sh
     volumes:
       - .:/app
@@ -20,6 +23,8 @@ services:
   celery:
     image: simple_api:main
     working_dir: /app
+    env_file:
+      - ./src/env/dev_env
     command: /bin/bash scripts/celery.sh
     volumes:
       - .:/app
@@ -29,6 +34,8 @@ services:
   celery-beat:
     image: simple_api:main
     working_dir: /app
+    env_file:
+      - ./src/env/dev_env
     command: /bin/bash scripts/celery_beat.sh
     volumes:
       - .:/app

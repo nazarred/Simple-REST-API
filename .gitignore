@@ -6,3 +6,5 @@ celerybeat-schedule
 media/
 static/
 celerybeat.pid
+
+local_env
