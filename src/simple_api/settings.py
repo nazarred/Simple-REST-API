@@ -167,3 +167,17 @@ class Dev(Base):
 
     CLEARBIT_KEY = values.Value('xxx')
     HUNTER_API_KEY = values.Value('xxx')
+
+
+class Prod(Base):
+    DEBUG = False
+
+    EMAIL_HOST = values.Value('smtp.sendgrid.net')
+    EMAIL_PORT = values.Value('587')
+    EMAIL_HOST_USER = values.Value('user')
+    EMAIL_HOST_PASSWORD = values.Value('password')
+
+    CLEARBIT_KEY = values.Value('xxx')
+    HUNTER_API_KEY = values.Value('xxx')
+
+    ALLOWED_HOSTS = ['.herokuapp.com']
