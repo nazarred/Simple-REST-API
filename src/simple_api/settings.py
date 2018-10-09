@@ -167,6 +167,8 @@ class Dev(Base):
 
     CLEARBIT_KEY = values.Value('xxx')
     HUNTER_API_KEY = values.Value('xxx')
+    ALLOWED_HOSTS = ['.herokuapp.com']
+
 
 
 class Prod(Base):
@@ -183,6 +185,3 @@ class Prod(Base):
     ALLOWED_HOSTS = ['.herokuapp.com']
 
     # STATIC_ROOT = os.path.join(Base.BASE_DIR, 'staticfiles')
-    STATICFILES_DIRS = (
-        os.path.join(Base.BASE_DIR, '..', 'staticfiles'),
-    )
