@@ -184,5 +184,5 @@ class Prod(Base):
 
     # STATIC_ROOT = os.path.join(Base.BASE_DIR, 'staticfiles')
     STATICFILES_DIRS = (
-        os.path.join(Base.BASE_DIR, 'static'),
+        os.path.join(Base.BASE_DIR, '..', 'staticfiles'),
     )
