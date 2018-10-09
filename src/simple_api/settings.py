@@ -183,5 +183,4 @@ class Prod(Base):
     HUNTER_API_KEY = values.Value('xxx')
 
     ALLOWED_HOSTS = ['.herokuapp.com']
-
-    # STATIC_ROOT = os.path.join(Base.BASE_DIR, 'staticfiles')
+    STATIC_ROOT = os.path.join(Base.BASE_DIR, 'staticfiles')
