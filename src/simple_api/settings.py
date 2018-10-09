@@ -186,7 +186,6 @@ class Prod(Base):
 
     ALLOWED_HOSTS = ['.herokuapp.com']
     STATIC_ROOT = os.path.join(Base.BASE_DIR, 'staticfiles')
-    
     DATABASES = Base.DATABASES.copy()
     DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
