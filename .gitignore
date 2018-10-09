@@ -4,7 +4,7 @@ db.sqlite3
 src/simple_api/local_settings.py
 celerybeat-schedule
 media/
-static/
+.static/
 celerybeat.pid
 
 local_env
