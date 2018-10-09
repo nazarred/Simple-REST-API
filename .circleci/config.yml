@@ -25,9 +25,9 @@ aliases:
   - &delploy-master-branch
       requires:
         - build
-      filters:
-        branches:
-          only: master
+#      filters:
+#        branches:
+#          only: master
 
 
 version: 2
