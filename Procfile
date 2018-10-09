@@ -1,2 +1,2 @@
-web: sh -c 'cd src && python manage.py runserver'
+web: sh -c 'cd src && gunicorn --chdir simple_api simple_api.wsgi:application'
 
