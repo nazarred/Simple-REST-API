@@ -12,3 +12,4 @@ mock==2.0.0
 psycopg2==2.7.5
 redis==2.10.6
 whitenoise
+dj-database-url==0.5.0

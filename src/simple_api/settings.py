@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 from configurations import Configuration, values
+import dj_database_url
+
 
 
 class Base(Configuration):
@@ -85,17 +87,18 @@ class Base(Configuration):
     # Database
     # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-    DATABASES = {
-        'default': {
-            'ENGINE': values.Value('django.db.backends.postgresql_psycopg2', environ_name='DJANGO_DATABASE_ENGINE'),
-            'NAME': values.Value('db', environ_name='DB', environ_prefix='POSTGRES'),
-            'USER': values.Value('db_user', environ_name='USER', environ_prefix='POSTGRES'),
-            'PASSWORD': values.Value('db_password', environ_name='PASSWORD', environ_prefix='POSTGRES'),
-            'HOST': values.Value('database', environ_name='DJANGO_DATABASE_HOST'),
-            'PORT': values.Value('5432', environ_name='DJANGO_DATABASE_PORT'),
-        }
-    }
+    DATABASES = {}
+    #     'default': {
+    #         'ENGINE': values.Value('django.db.backends.postgresql_psycopg2', environ_name='DJANGO_DATABASE_ENGINE'),
+    #         'NAME': values.Value('db', environ_name='DB', environ_prefix='POSTGRES'),
+    #         'USER': values.Value('db_user', environ_name='USER', environ_prefix='POSTGRES'),
+    #         'PASSWORD': values.Value('db_password', environ_name='PASSWORD', environ_prefix='POSTGRES'),
+    #         'HOST': values.Value('database', environ_name='DJANGO_DATABASE_HOST'),
+    #         'PORT': values.Value('5432', environ_name='DJANGO_DATABASE_PORT'),
+    #     }
+    # }
 
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
     # Password validation
     # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
