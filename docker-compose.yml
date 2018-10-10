@@ -13,7 +13,7 @@ services:
     command: /bin/bash scripts/start_api.sh
     volumes:
       - .:/app
-      - ./static:/app/static
+      - .src/staticfiles:/app/staticfiles
       - ./media:/app/media
     expose:
       - 8000
