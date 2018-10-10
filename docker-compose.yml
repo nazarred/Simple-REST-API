@@ -46,7 +46,7 @@ services:
   nginx:
     build: ./config/nginx/
     ports:
-      - 8000:80
+      - 80:80
     volumes:
       - ./static:/app/static
       - ./media:/app/media
