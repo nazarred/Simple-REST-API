@@ -48,7 +48,7 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./static:/app/static
+      - .src/staticfiles:/app/staticfiles
       - ./media:/app/media
     depends_on:
       - simple_api
