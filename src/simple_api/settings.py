@@ -170,7 +170,7 @@ class Dev(Base):
 
     CLEARBIT_KEY = values.Value('xxx')
     HUNTER_API_KEY = values.Value('xxx')
-    ALLOWED_HOSTS = ['.herokuapp.com']
+    ALLOWED_HOSTS = ['localhost', '.herokuapp.com', 'ec2-18-217-34-115.us-east-2.compute.amazonaws.com']
 
 
 class Prod(Base):
@@ -184,7 +184,7 @@ class Prod(Base):
     CLEARBIT_KEY = values.Value('xxx')
     HUNTER_API_KEY = values.Value('xxx')
 
-    ALLOWED_HOSTS = ['.herokuapp.com']
+    ALLOWED_HOSTS = ['localhost', '.herokuapp.com', 'ec2-18-217-34-115.us-east-2.compute.amazonaws.com']
     STATIC_ROOT = os.path.join(Base.BASE_DIR, 'staticfiles')
     DATABASES = Base.DATABASES.copy()
     DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
