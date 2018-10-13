@@ -30,6 +30,26 @@ jobs:
           command: |
             heroku run --app $HEROKU_APP python src/manage.py migrate
 
+  deploy-to-gcloud:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Store Service Account
+          command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+      - run:
+          name: Sign in to Google Cloud
+          command: |
+            sudo gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            sudo gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            sudo gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+      - run:
+          name: Deploy to Google Cloud
+          command: >
+            sudo gcloud compute --project "test-project-219218" ssh --zone "europe-west4-a" "test-2018" --command
+            'cd /home/rednaz1990/test &&
+            sudo git status'
+
 
 workflows:
   version: 2
@@ -42,3 +62,9 @@ workflows:
           filters:
             branches:
               only: master
+      - deploy-to-gcloud:
+          requires:
+            - build
+          filters:
+            branches:
+              only: gcloud
