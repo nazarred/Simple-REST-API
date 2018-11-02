@@ -1,5 +1,4 @@
 Simple-REST-API (python 3.5)
-test task for StarNavi team
 
 Automated bot
 
